@@ -303,6 +303,12 @@ function bulletCollides(){
           collided = true;
           playerShipProperties.score = playerShipProperties.score + 10;
           scoreContainer.text(playerShipProperties.score);
+          if (liveShips.indexOf(1) === -1) {
+              $("body").append("<div class='youWin'></div>");
+              $(".youWin").click(function () {
+                  window.location.reload(true);
+              });
+          }
 
         }else if(liveShips[index] < 0){
 
@@ -413,7 +419,7 @@ function enemyBulletCollides(){
     life.remove();
 
     if(playerShipProperties.lifes === 0){
-      
+
       elementPlayerShip.remove();
       $("body").append("<div class='gameOver'></div>");
       $(".gameOver").click(function(){
