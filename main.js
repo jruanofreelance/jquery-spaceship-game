@@ -6,31 +6,24 @@ var playerShipProperties = {
 		movement: 10,
     score: 0,
     timeRewards: 10000
-};
-
-var enemyShipProperties = {
-    lifes: 1,
-    munition: 10000,
-    weapon: 1,
-		speed: 10,
-		movement: 2000
-};
-
-var numberEnemies = 6;
-var numberPlayers = 1;
-
-var liveShips = [enemyShipProperties.lifes, enemyShipProperties.lifes, enemyShipProperties.lifes, enemyShipProperties.lifes, enemyShipProperties.lifes, enemyShipProperties.lifes];
-
-//keys player
-var leftKey = 37;
-var upKey = 38;
-var rightKey = 39;
-var downKey = 40;
-
-var widthWindow = $(window).width();
-
-var windowMarginLeft = 50;
-var windowMarginRight = widthWindow - windowMarginLeft;
+    },
+    enemyShipProperties = {
+      lifes: 1,
+      munition: 10000,
+      weapon: 1,
+  		speed: 10,
+  		movement: 2000
+    },
+    numberEnemies = 6,
+    numberPlayers = 1,
+    liveShips = [enemyShipProperties.lifes, enemyShipProperties.lifes, enemyShipProperties.lifes, enemyShipProperties.lifes, enemyShipProperties.lifes, enemyShipProperties.lifes],
+    leftKey = 37,
+    upKey = 38,
+    rightKey = 39,
+    downKey = 40,
+    widthWindow = $(window).width(),
+    windowMarginLeft = 50,
+    windowMarginRight = widthWindow - windowMarginLeft;
 
 $(document).ready(function(){
 
@@ -68,8 +61,13 @@ $(document).ready(function(){
 
 function rewards(){
 
-  var widthWindow = $(window).width();
-  var randomNumberInitialPositionReward = Math.floor(Math.random() * widthWindow);
+  var widthWindow = $(window).width(),
+      randomNumberInitialPositionReward = Math.floor(Math.random() * widthWindow),
+      rewards,
+      randomRewardObtained,
+      heightWindow,
+      i,
+      hasRewardCollisionWithShip;
 
   if(randomNumberInitialPositionReward < 20){
     randomNumberInitialPositionReward = 20;
@@ -80,11 +78,11 @@ function rewards(){
   pointReward = "pointReward";
   lifeReward = "lifeReward";
   //weaponReward = "weaponReward";
-  //var rewards = [pointReward, lifeReward, weaponReward];
-  var rewards = [pointReward, lifeReward];
-  var randomRewardObtained = Math.floor(Math.random()*rewards.length);
+  //rewards = [pointReward, lifeReward, weaponReward];
+  rewards = [pointReward, lifeReward];
+  randomRewardObtained = Math.floor(Math.random()*rewards.length);
 
-  for (var i = 0; i < rewards.length; i++) {
+  for (i = 0; i < rewards.length; i++) {
     if(randomRewardObtained == i){
 
       elementEnemyShipsContanier.before("<div class='"+rewards[i]+"'></div>");
@@ -97,13 +95,12 @@ function rewards(){
     }
   }
 
-  var heightWindow = windowHeightObtain();
-
+  heightWindow = windowHeightObtain();
   topRewardCollidedWithShip = heightWindow - 140;
 
   rewardElement.animate({top:"+" + topRewardCollidedWithShip + "px"},3000,"linear",function(){
 
-    var hasRewardCollisionWithShip = rewardCollides();
+    hasRewardCollisionWithShip = rewardCollides();
 
     if(hasRewardCollisionWithShip === false){
 
@@ -120,11 +117,11 @@ function rewards(){
 }
 
 function rewardCollides(){
-  var widthRewardElement = rewardElement.width();
-  var rewardElementPositionLeft = rewardElement.offset().left;
-  var rewardCollidedWithShip = false;
-  var elementDistancePlayerShip = elementPlayerShip.offset();
-  var positionXPlayerShip = elementDistancePlayerShip.left;
+  var widthRewardElement = rewardElement.width(),
+      rewardElementPositionLeft = rewardElement.offset().left,
+      rewardCollidedWithShip = false,
+      elementDistancePlayerShip = elementPlayerShip.offset(),
+      positionXPlayerShip = elementDistancePlayerShip.left;
 
   if(rewardElementPositionLeft > positionXPlayerShip && rewardElementPositionLeft < positionXPlayerShip + widthPlayerShip){
 
@@ -158,9 +155,10 @@ function initializeScore(){
 }
 
 function initializeLifes(){
+  var i;
   lifeContainer = $(".lifesContainer");
 
-  for (var i = 1; i <= playerShipProperties.lifes; i++) {
+  for (i = 1; i <= playerShipProperties.lifes; i++) {
     lifeContainer.append("<div class='life' id='life" + i + "'></div>");
   }
 
@@ -188,15 +186,16 @@ function initializeEvents(){
 
 	$("body").keydown(function (event) {
 		event.preventDefault();
-		var key = event.keyCode;
+		var key = event.keyCode,
+		    elementDistancePlayerShip = elementPlayerShip.offset(),
+    		positionXPlayerShip = elementDistancePlayerShip.left,
+       	positionYPlayerShip = elementDistancePlayerShip.top,
+    		centerXPlayerShip = positionXPlayerShip + widthPlayerShip / 2,
+    		centerYPlayerShip = positionYPlayerShip + heightPlayerShip / 2,
+        bulletPositionCenter,
+        hasCollided;
 
-	  windowWidthObtain();
-
-		var elementDistancePlayerShip = elementPlayerShip.offset();
-		var positionXPlayerShip = elementDistancePlayerShip.left;
-   	var positionYPlayerShip = elementDistancePlayerShip.top;
-		var centerXPlayerShip = positionXPlayerShip + widthPlayerShip / 2;
-		var centerYPlayerShip = positionYPlayerShip + heightPlayerShip / 2;
+    windowWidthObtain();
 
 		if(key === leftKey && positionXPlayerShip > windowMarginLeft){
 			//elementPlayerShip.animate({left: "-=" + playerShipProperties.movement}, playerShipProperties.speed, 'linear', function () {});
@@ -217,13 +216,13 @@ function initializeEvents(){
         elementPlayerShip.before("<div class='weaponShip1'></div>");
   	    bullet = $(".weaponShip1");
 
-  			var bulletPositionCenter = centerXPlayerShip - 10;
+  			bulletPositionCenter = centerXPlayerShip - 10;
 
   			bullet.css("left",bulletPositionCenter + "px");
 
   			bullet.animate({top:"110px"},3000,"linear",function(){
 
-          var hasCollided = bulletCollides();
+          hasCollided = bulletCollides();
 
           if(hasCollided === false){
 
@@ -278,11 +277,11 @@ function enemyShipsToLeft(){
 
 function bulletCollides(){
 
-  var widthBullet = bullet.width();
-  var widthEnemyShip = $(".enemyShips").width();
-  var bulletPositionLeft = bullet.offset().left;
-  var enemyShipsPosition = [];
-  var collided = false;
+  var widthBullet = bullet.width(),
+      widthEnemyShip = $(".enemyShips").width(),
+      bulletPositionLeft = bullet.offset().left,
+      enemyShipsPosition = [],
+      collided = false;
 
   $(".enemyShipsContainer div").each(function(){
 
@@ -362,9 +361,11 @@ function generateRandomNumberEnemyShoot(){
 
 function enemyShoot(enemyNumber){
 
-  var elementDistanceEnemyShip = enemyShips[enemyNumber].offset();
-  var positionXEnemyShip = elementDistanceEnemyShip.left;
-  var positionYEnemyShip = elementDistanceEnemyShip.top;
+  var elementDistanceEnemyShip = enemyShips[enemyNumber].offset(),
+      positionXEnemyShip = elementDistanceEnemyShip.left,
+      positionYEnemyShip = elementDistanceEnemyShip.top,
+      heightWindow,
+      hasCollisionWithShip;
 
   margenDisparoXnaveEnemiga1 = positionXEnemyShip + 40;
   margenDisparoYnaveEnemiga1 = positionYEnemyShip + 70;
@@ -378,13 +379,13 @@ function enemyShoot(enemyNumber){
   enemyBullet.css("left", margenDisparoXnaveEnemiga1 - 10 + "px");
   enemyBullet.css("top", margenDisparoYnaveEnemiga1 + "px");
 
-  var heightWindow = windowHeightObtain();
+  heightWindow = windowHeightObtain();
 
   topCollidedWithShip = heightWindow - 160;
 
   enemyBullet.animate({top:"+" + topCollidedWithShip + "px"},3000,"linear",function(){
 
-    var hasCollisionWithShip = enemyBulletCollides();
+    hasCollisionWithShip = enemyBulletCollides();
 
     if(hasCollisionWithShip === false){
 
@@ -403,17 +404,19 @@ function enemyShoot(enemyNumber){
 
 function enemyBulletCollides(){
 
-  var widthEnemyBullet = enemyBullet.width();
-  var bulletPositionLeft = enemyBullet.offset().left;
-  var collidedWithShip = false;
-  var elementDistancePlayerShip = elementPlayerShip.offset();
-  var positionXPlayerShip = elementDistancePlayerShip.left;
+  var widthEnemyBullet = enemyBullet.width(),
+      bulletPositionLeft = enemyBullet.offset().left,
+      collidedWithShip = false,
+      elementDistancePlayerShip = elementPlayerShip.offset(),
+      positionXPlayerShip = elementDistancePlayerShip.left,
+      previouslifes,
+      life;
 
   if(bulletPositionLeft > positionXPlayerShip && bulletPositionLeft < positionXPlayerShip + widthPlayerShip){
 
     collidedWithShip = true;
-    var previouslifes = playerShipProperties.lifes;
-    var life = $("#life" + previouslifes);
+    previouslifes = playerShipProperties.lifes;
+    life = $("#life" + previouslifes);
     playerShipProperties.lifes = playerShipProperties.lifes - 1;
 
     life.remove();
